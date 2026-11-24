@@ -1,0 +1,251 @@
+<title>Text Editor in C</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+  /* Minimal academic showcase — single-column scroll */
+  :root {
+    --bg: #fdfdfd; --fg: #1a1a1a; --muted: #64686e;
+    --accent: #2563eb; --accent-light: #e8effc;
+    --code-bg: #f4f5f7; --border: #e2e4e8;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-code: 'Source Code Pro', monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #111318; --fg: #e4e5e9; --muted: #9499a4;
+    --accent: #5b93f5; --accent-light: #1c2536;
+    --code-bg: #191c24; --border: #2a2d36;
+    color-scheme: dark;
+  }}
+  :root[data-theme="dark"] {
+    --bg: #111318; --fg: #e4e5e9; --muted: #9499a4;
+    --accent: #5b93f5; --accent-light: #1c2536;
+    --code-bg: #191c24; --border: #2a2d36;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); line-height: 1.7;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    max-width: 720px; margin: 0 auto;
+  }
+  h1 { font-size: 1.8rem; font-weight: 600; margin: 2.5rem 0 0.3rem; letter-spacing: -0.02em }
+  h2 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.4rem 0 0.4rem }
+  p, li { font-size: 0.95rem; color: var(--fg) }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin: 0 0 2rem }
+  .tag { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.75rem; font-weight: 600; padding: 0.15em 0.6em; border-radius: 4px; margin-right: 0.4em }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-family: var(--font-code); font-size: 0.82rem; line-height: 1.6; margin: 1rem 0 }
+  code { font-family: var(--font-code); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px }
+  .line-exp { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 1rem; margin: 0.8rem 0; font-size: 0.9rem }
+  .line-exp .ln { font-family: var(--font-code); color: var(--muted); font-size: 0.82rem; text-align: right; padding-top: 0.1em }
+  .line-exp .ex { border-bottom: 1px solid var(--border); padding-bottom: 0.35rem }
+  .line-exp .ex:last-child { border: none }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem }
+  th { text-align: left; font-weight: 600; padding: 0.5rem 0.8rem; border-bottom: 2px solid var(--border); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted) }
+  td { padding: 0.45rem 0.8rem; border-bottom: 1px solid var(--border) }
+  ul { padding-left: 1.3rem }
+  li { margin-bottom: 0.3rem }
+  .flow { text-align: center; margin: 1.5rem 0; overflow-x: auto }
+  .flow svg { max-width: 100% }
+  svg text { font-family: var(--font-body) }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0 }
+  .algo-step { display: flex; gap: 0.6rem; margin: 0.4rem 0; font-size: 0.9rem }
+  .algo-step .num { font-family: var(--font-code); color: var(--accent); font-weight: 600; min-width: 1.6rem }
+  .diff-table td:first-child { font-weight: 600; white-space: nowrap }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem 0 1rem; border-top: 1px solid var(--border); margin-top: 3rem }
+</style>
+
+<h1>Text Editor in C</h1>
+<p class="subtitle">A console-based line editor using linked lists, dynamic memory allocation, and file I/O</p>
+<span class="tag">C Language</span>
+<span class="tag">Linked List</span>
+<span class="tag">Dynamic Memory</span>
+<span class="tag">File I/O</span>
+
+<h2>Project Overview</h2>
+<p>A menu-driven console text editor where each line of text is stored as a node in a singly linked list. The user can insert, delete, edit, display, save, and load lines through numbered menu options. All memory is dynamically allocated and freed before exit, making it Valgrind-clean.</p>
+
+<h2>C Features &amp; Concepts Used</h2>
+<table>
+  <tr><th>Concept</th><th>Where it appears</th></tr>
+  <tr><td><code>struct</code></td><td>Each line is a <code>struct Line</code> with a text array and a <code>next</code> pointer</td></tr>
+  <tr><td>Singly Linked List</td><td>Lines are chained via <code>next</code> pointers; head points to the first node</td></tr>
+  <tr><td><code>malloc</code> / <code>free</code></td><td><code>create_line()</code> allocates; <code>delete_line()</code> and <code>free_all_lines()</code> deallocate</td></tr>
+  <tr><td>Pointer traversal</td><td>Every function walks the list with <code>current = current-&gt;next</code></td></tr>
+  <tr><td><code>fopen</code> / <code>fclose</code></td><td>Save opens in write mode <code>"w"</code>, load opens in read mode <code>"r"</code></td></tr>
+  <tr><td><code>fprintf</code> / <code>fgets</code></td><td>Write lines to file; read lines from file</td></tr>
+  <tr><td><code>strcpy</code> / <code>strcspn</code></td><td>Copy text into nodes; strip the newline character from input</td></tr>
+  <tr><td><code>switch-case</code></td><td>Menu dispatch in <code>main()</code></td></tr>
+  <tr><td>Global variables</td><td><code>head</code> and <code>total_lines</code> are accessible by all functions</td></tr>
+  <tr><td><code>#define</code> macro</td><td><code>MAX_LINE 1024</code> sets the maximum characters per line</td></tr>
+</table>
+
+<h2>Algorithm</h2>
+
+<h3>Main Program Loop</h3>
+<div class="algo-step"><span class="num">1.</span><span>Display 8-option menu</span></div>
+<div class="algo-step"><span class="num">2.</span><span>Read user's integer choice with <code>scanf</code></span></div>
+<div class="algo-step"><span class="num">3.</span><span>Dispatch to the matching function via <code>switch-case</code></span></div>
+<div class="algo-step"><span class="num">4.</span><span>Repeat until user chooses option 8 (Exit)</span></div>
+
+<h3>Insert at End</h3>
+<div class="algo-step"><span class="num">1.</span><span>Allocate a new node with <code>malloc</code></span></div>
+<div class="algo-step"><span class="num">2.</span><span>Copy the text into the node</span></div>
+<div class="algo-step"><span class="num">3.</span><span>If list is empty, set <code>head = new_line</code></span></div>
+<div class="algo-step"><span class="num">4.</span><span>Else traverse to the last node, set <code>last-&gt;next = new_line</code></span></div>
+
+<h3>Insert at Position</h3>
+<div class="algo-step"><span class="num">1.</span><span>Validate position is between 1 and total_lines+1</span></div>
+<div class="algo-step"><span class="num">2.</span><span>If position is 1, new node becomes head</span></div>
+<div class="algo-step"><span class="num">3.</span><span>Else traverse to node at (position&minus;1), rewire pointers</span></div>
+
+<h3>Delete a Line</h3>
+<div class="algo-step"><span class="num">1.</span><span>Validate position is between 1 and total_lines</span></div>
+<div class="algo-step"><span class="num">2.</span><span>If position is 1, move head to <code>head-&gt;next</code></span></div>
+<div class="algo-step"><span class="num">3.</span><span>Else traverse to (position&minus;1), skip over the target node</span></div>
+<div class="algo-step"><span class="num">4.</span><span>Call <code>free()</code> on the removed node</span></div>
+
+<h3>Save / Load</h3>
+<div class="algo-step"><span class="num">1.</span><span><b>Save:</b> Open file in <code>"w"</code> mode, write each node's text with <code>fprintf</code>, close</span></div>
+<div class="algo-step"><span class="num">2.</span><span><b>Load:</b> Open file in <code>"r"</code> mode, free existing list, read each line with <code>fgets</code>, insert at end</span></div>
+
+<h2>Flowchart</h2>
+<div class="flow">
+<svg viewBox="0 0 520 680" width="520" height="680" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="var(--accent)"/></marker>
+  </defs>
+  <!-- Start -->
+  <ellipse cx="260" cy="30" rx="60" ry="22" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="260" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">START</text>
+  <!-- Arrow -->
+  <line x1="260" y1="52" x2="260" y2="75" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- Show Menu -->
+  <rect x="175" y="80" width="170" height="38" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="260" y="104" text-anchor="middle" font-size="12" fill="var(--fg)">Show Menu</text>
+  <line x1="260" y1="118" x2="260" y2="140" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- Read Choice -->
+  <rect x="175" y="145" width="170" height="38" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="260" y="169" text-anchor="middle" font-size="12" fill="var(--fg)">Read Choice (scanf)</text>
+  <line x1="260" y1="183" x2="260" y2="210" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- Decision diamond -->
+  <polygon points="260,215 370,265 260,315 150,265" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="260" y="262" text-anchor="middle" font-size="11" font-weight="500" fill="var(--fg)">Choice?</text>
+  <!-- Left branch: 1-2 Insert -->
+  <line x1="150" y1="265" x2="60" y2="265" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="5" y="285" width="110" height="55" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="60" y="305" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">1 or 2</text>
+  <text x="60" y="320" text-anchor="middle" font-size="10" fill="var(--fg)">Insert Line</text>
+  <text x="60" y="333" text-anchor="middle" font-size="9" fill="var(--muted)">(end or position)</text>
+  <!-- Right branch: 3 Delete -->
+  <line x1="370" y1="265" x2="460" y2="265" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="405" y="285" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="460" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">3</text>
+  <text x="460" y="318" text-anchor="middle" font-size="10" fill="var(--fg)">Delete Line</text>
+  <!-- Center branches -->
+  <!-- 4 Edit -->
+  <line x1="220" y1="315" x2="140" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="85" y="375" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="140" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">4</text>
+  <text x="140" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Edit Line</text>
+  <!-- 5 Display -->
+  <rect x="205" y="375" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="260" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">5</text>
+  <text x="260" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Display Lines</text>
+  <line x1="260" y1="315" x2="260" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- 6-7 File -->
+  <line x1="300" y1="315" x2="380" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="325" y="375" width="110" height="55" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="380" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">6 or 7</text>
+  <text x="380" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Save / Load</text>
+  <text x="380" y="421" text-anchor="middle" font-size="9" fill="var(--muted)">(file operations)</text>
+  <!-- All merge back -->
+  <line x1="60" y1="340" x2="60" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="460" y1="330" x2="460" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="140" y1="420" x2="140" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="260" y1="420" x2="260" y2="460" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="380" y1="430" x2="380" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
+  <!-- Merge line -->
+  <line x1="60" y1="480" x2="460" y2="480" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="260" y1="480" x2="260" y2="505" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- Choice 8 decision -->
+  <polygon points="260,510 340,545 260,580 180,545" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="260" y="542" text-anchor="middle" font-size="11" font-weight="500" fill="var(--fg)">Choice = 8?</text>
+  <!-- No - loop back -->
+  <line x1="180" y1="545" x2="80" y2="545" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="155" y="538" font-size="10" fill="var(--muted)">No</text>
+  <line x1="80" y1="545" x2="80" y2="99" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="80" y1="99" x2="170" y2="99" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- Yes - free and exit -->
+  <line x1="260" y1="580" x2="260" y2="600" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="275" y="594" font-size="10" fill="var(--muted)">Yes</text>
+  <rect x="185" y="605" width="150" height="35" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="260" y="627" text-anchor="middle" font-size="11" fill="var(--fg)">free_all_lines()</text>
+  <line x1="260" y1="640" x2="260" y2="655" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <ellipse cx="260" cy="670" rx="40" ry="18" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="260" y="675" text-anchor="middle" font-size="12" font-weight="600" fill="var(--fg)">END</text>
+</svg>
+</div>
+
+<h2>Linked List Visualization</h2>
+<div class="flow">
+<svg viewBox="0 0 500 70" width="500" height="70" xmlns="http://www.w3.org/2000/svg">
+  <text x="0" y="20" font-size="11" font-weight="600" fill="var(--accent)">head</text>
+  <line x1="30" y1="22" x2="60" y2="40" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="65" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="115" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Hello World"</text>
+  <line x1="165" y1="42" x2="195" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="200" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="250" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Line two"</text>
+  <line x1="300" y1="42" x2="330" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="335" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="385" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Third line"</text>
+  <line x1="435" y1="42" x2="465" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="470" y="47" font-size="11" font-weight="600" fill="var(--muted)">NULL</text>
+</svg>
+</div>
+
+<h2>What Makes This Project Different</h2>
+<p>If another team builds a similar text editor, here are the distinguishing points of this implementation:</p>
+<table class="diff-table">
+  <tr><th>Aspect</th><th>This project</th><th>Typical alternative</th></tr>
+  <tr><td>Data structure</td><td>Singly linked list (dynamic size, no wasted memory)</td><td>Fixed-size array of strings (wastes memory, hard limit)</td></tr>
+  <tr><td>Insert at position</td><td>Supported at any valid index</td><td>Often only append at end</td></tr>
+  <tr><td>Memory management</td><td><code>free_all_lines()</code> cleans up everything; Valgrind-clean</td><td>Often missing, causes memory leaks</td></tr>
+  <tr><td>File persistence</td><td>Both save and load supported</td><td>Some only save, cannot reload</td></tr>
+  <tr><td>Edit in place</td><td>Modify any line without deleting and re-inserting</td><td>Often requires delete + insert</td></tr>
+</table>
+
+<h2>Conclusion</h2>
+<ul>
+  <li>The project demonstrates core C concepts: structures, pointers, dynamic memory, linked lists, and file I/O</li>
+  <li>Every <code>malloc</code> has a matching <code>free</code>, making the program memory-safe and Valgrind-clean</li>
+  <li>The menu-driven design keeps the interface simple for console use</li>
+  <li>File operations allow data to persist across sessions</li>
+  <li>The linked list allows unlimited lines (bounded only by available RAM)</li>
+</ul>
+
+<h2>Limitations</h2>
+<ul>
+  <li><b>No undo/redo</b> &mdash; once a line is deleted or edited, the old content is gone</li>
+  <li><b>Line length cap</b> &mdash; each line is limited to 1024 characters (<code>MAX_LINE</code>)</li>
+  <li><b>No search</b> &mdash; cannot find a word or line by content</li>
+  <li><b>Sequential access</b> &mdash; reaching line N requires traversing N&minus;1 nodes (O(n) per operation)</li>
+  <li><b>No cursor movement</b> &mdash; this is a line editor, not a character-level editor like vim or nano</li>
+  <li><b>Single file at a time</b> &mdash; no tabs or multiple buffers</li>
+  <li><b>No syntax highlighting</b> &mdash; all text is treated as plain text</li>
+  <li><b>No auto-save</b> &mdash; user must explicitly choose save before exiting</li>
+</ul>
+
+<hr>
+
+<h2>Compile &amp; Run</h2>
+<pre>gcc -o text_editor text_editor.c
+./text_editor</pre>
+
+<h3>Check for Memory Leaks</h3>
+<pre>valgrind --leak-check=full ./text_editor</pre>
+<p>Expected output: <code>All heap blocks were freed -- no leaks are possible</code></p>
+
+<footer>Text Editor in C &mdash; Console-Based Line Editor Project</footer>

@@ -1,251 +1,637 @@
-<title>Text Editor in C</title>
+<title>Text Editor Showcase</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-  /* Minimal academic showcase — single-column scroll */
-  :root {
-    --bg: #fdfdfd; --fg: #1a1a1a; --muted: #64686e;
-    --accent: #2563eb; --accent-light: #e8effc;
-    --code-bg: #f4f5f7; --border: #e2e4e8;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-code: 'Source Code Pro', monospace;
-  }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg: #111318; --fg: #e4e5e9; --muted: #9499a4;
-    --accent: #5b93f5; --accent-light: #1c2536;
-    --code-bg: #191c24; --border: #2a2d36;
-    color-scheme: dark;
-  }}
-  :root[data-theme="dark"] {
-    --bg: #111318; --fg: #e4e5e9; --muted: #9499a4;
-    --accent: #5b93f5; --accent-light: #1c2536;
-    --code-bg: #191c24; --border: #2a2d36;
-    color-scheme: dark;
-  }
-  body {
-    background: var(--bg); color: var(--fg);
-    font-family: var(--font-body); line-height: 1.7;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    max-width: 720px; margin: 0 auto;
-  }
-  h1 { font-size: 1.8rem; font-weight: 600; margin: 2.5rem 0 0.3rem; letter-spacing: -0.02em }
-  h2 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem }
-  h3 { font-size: 1rem; font-weight: 600; margin: 1.4rem 0 0.4rem }
-  p, li { font-size: 0.95rem; color: var(--fg) }
-  .subtitle { color: var(--muted); font-size: 0.95rem; margin: 0 0 2rem }
-  .tag { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.75rem; font-weight: 600; padding: 0.15em 0.6em; border-radius: 4px; margin-right: 0.4em }
-  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-family: var(--font-code); font-size: 0.82rem; line-height: 1.6; margin: 1rem 0 }
-  code { font-family: var(--font-code); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px }
-  .line-exp { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 1rem; margin: 0.8rem 0; font-size: 0.9rem }
-  .line-exp .ln { font-family: var(--font-code); color: var(--muted); font-size: 0.82rem; text-align: right; padding-top: 0.1em }
-  .line-exp .ex { border-bottom: 1px solid var(--border); padding-bottom: 0.35rem }
-  .line-exp .ex:last-child { border: none }
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem }
-  th { text-align: left; font-weight: 600; padding: 0.5rem 0.8rem; border-bottom: 2px solid var(--border); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted) }
-  td { padding: 0.45rem 0.8rem; border-bottom: 1px solid var(--border) }
-  ul { padding-left: 1.3rem }
-  li { margin-bottom: 0.3rem }
-  .flow { text-align: center; margin: 1.5rem 0; overflow-x: auto }
-  .flow svg { max-width: 100% }
-  svg text { font-family: var(--font-body) }
-  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0 }
-  .algo-step { display: flex; gap: 0.6rem; margin: 0.4rem 0; font-size: 0.9rem }
-  .algo-step .num { font-family: var(--font-code); color: var(--accent); font-weight: 600; min-width: 1.6rem }
-  .diff-table td:first-child { font-weight: 600; white-space: nowrap }
-  footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem 0 1rem; border-top: 1px solid var(--border); margin-top: 3rem }
+:root {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #cbd5e1;
+  --accent: #6366f1;
+  --accent-muted: #e0e7ff;
+  --term-bg: #0b0e18;
+  --term-surface: #12162a;
+  --term-text: #cbd5e1;
+  --term-green: #10b981;
+  --term-yellow: #f59e0b;
+  --term-red: #ef4444;
+  --term-blue: #60a5fa;
+  --term-muted: #475569;
+  --code-bg: #0d1117;
+  --node-bg: #6366f1;
+  --node-text: #fff;
+  --node-new: #10b981;
+  --node-del: #ef4444;
+  --node-edit: #f59e0b;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg: #020617; --surface: #0f172a; --text: #e2e8f0; --text-muted: #94a3b8;
+  --border: #1e293b; --accent: #818cf8; --accent-muted: rgba(129,140,248,.12);
+  --code-bg: #060a12; --term-bg: #04060e; --term-surface: #0a0e1a;
+  color-scheme: dark;
+}}
+:root[data-theme="dark"]{
+  --bg: #020617; --surface: #0f172a; --text: #e2e8f0; --text-muted: #94a3b8;
+  --border: #1e293b; --accent: #818cf8; --accent-muted: rgba(129,140,248,.12);
+  --code-bg: #060a12; --term-bg: #04060e; --term-surface: #0a0e1a;
+  color-scheme: dark;
+}
+
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;display:flex;flex-direction:column;
+}
+
+.app{display:flex;flex-direction:column;height:100%;min-height:0;gap:0}
+.app-header{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;
+}
+.app-header h1{font-size:16px;font-weight:700;letter-spacing:-.02em;margin:0}
+.app-header h1 span{color:var(--accent);font-weight:400}
+.header-badge{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  background:var(--accent);color:#fff;padding:3px 10px;border-radius:100px;
+}
+
+.panels{flex:1;display:flex;gap:12px;min-height:0;padding:12px 0}
+.terminal-wrap{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.term-chrome{
+  background:var(--term-surface);display:flex;align-items:center;gap:8px;padding:10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.term-dots{display:flex;gap:6px}
+.term-dots span{width:10px;height:10px;border-radius:50%}
+.term-dots .r{background:#ef4444} .term-dots .y{background:#f59e0b} .term-dots .g{background:#22c55e}
+.term-title{color:#94a3b8;font-size:12px;font-family:'JetBrains Mono',monospace}
+
+.term-body{
+  flex:1;background:var(--term-bg);display:flex;flex-direction:column;min-height:0;
+}
+.term-output{
+  flex:1;overflow-y:auto;padding:12px 14px;font-family:'JetBrains Mono',monospace;
+  font-size:13px;line-height:1.65;
+}
+.term-output::-webkit-scrollbar{width:6px}
+.term-output::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl-header{color:#e2e8f0;font-weight:700}
+.tl-green{color:var(--term-green)} .tl-yellow{color:var(--term-yellow)}
+.tl-red{color:var(--term-red)} .tl-blue{color:var(--term-blue)}
+.tl-muted{color:var(--term-muted)} .tl-echo{color:#94a3b8;opacity:.7}
+.tl-prompt{color:var(--term-green)}
+
+.term-input-row{
+  display:flex;align-items:center;gap:6px;padding:8px 14px;
+  background:var(--term-surface);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.term-input-row .prompt-label{
+  color:var(--term-green);font-family:'JetBrains Mono',monospace;font-size:13px;
+  white-space:nowrap;flex-shrink:0;
+}
+#input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--term-text);font-family:'JetBrains Mono',monospace;font-size:13px;
+  caret-color:var(--term-green);
+}
+
+.side{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface)}
+.tab-bar{
+  display:flex;border-bottom:1px solid var(--border);flex-shrink:0;
+  background:var(--surface);overflow-x:auto;
+}
+.tab-btn{
+  padding:10px 16px;font-size:12px;font-weight:600;border:none;background:transparent;
+  color:var(--text-muted);cursor:pointer;white-space:nowrap;position:relative;
+  font-family:'Inter',system-ui,sans-serif;
+}
+.tab-btn.active{color:var(--accent)}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:0;left:12px;right:12px;height:2px;
+  background:var(--accent);border-radius:2px 2px 0 0;
+}
+.tab-panel{flex:1;overflow:auto;min-height:0}
+
+.viz-panel{padding:16px;display:flex;flex-direction:column;gap:16px}
+.viz-empty{
+  text-align:center;padding:40px 20px;color:var(--text-muted);
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+}
+.viz-empty b{display:block;font-size:18px;color:var(--text);margin-bottom:8px;font-family:'Inter',system-ui,sans-serif}
+
+.ll-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ll-head{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--accent);background:var(--accent-muted);padding:3px 8px;border-radius:4px;
+  margin-right:4px;
+}
+.ll-node{
+  background:var(--node-bg);color:var(--node-text);border-radius:8px;
+  padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:12px;
+  display:flex;flex-direction:column;gap:2px;max-width:180px;
+  transition:background .3s,transform .3s,opacity .3s;
+  animation:nodeIn .35s ease-out;
+}
+@keyframes nodeIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.ll-node.hl-new{background:var(--node-new);transform:scale(1.06)}
+.ll-node.hl-del{background:var(--node-del);opacity:.7}
+.ll-node.hl-edit{background:var(--node-edit)}
+.ll-node .n-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.ll-node .n-ptr{font-size:10px;opacity:.7}
+.ll-arrow{color:var(--accent);font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.ll-null{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.6}
+
+.viz-stats{
+  display:flex;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--border);
+}
+.stat{font-size:12px;color:var(--text-muted)}
+.stat b{color:var(--text);font-variant-numeric:tabular-nums}
+
+.code-scroll{background:var(--code-bg);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7}
+.code-fn{padding:2px 0;border-left:3px solid transparent;transition:background .3s,border-color .3s}
+.code-fn.active{background:rgba(99,102,241,.07);border-left-color:var(--accent)}
+.code-fn .fn-label{
+  display:none;padding:2px 12px 2px 48px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--accent);
+}
+.code-fn.active .fn-label{display:block}
+.cl{display:flex;padding:0 12px}
+.cl-num{min-width:36px;text-align:right;padding-right:12px;color:#4b5563;user-select:none}
+.cl-code{flex:1;white-space:pre;min-width:0;overflow-x:auto}
+.hl-kw{color:#c084fc} .hl-str{color:#34d399} .hl-num{color:#fb923c}
+.hl-fn{color:#60a5fa} .hl-cmt{color:#6b7280;font-style:italic} .hl-pre{color:#f472b6}
+
+.algo-panel{padding:16px;display:flex;flex-direction:column;gap:8px}
+.algo-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.algo-idle{color:var(--text-muted);font-size:13px;padding:20px 0;text-align:center}
+.algo-step{
+  display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;
+  font-size:13px;transition:background .2s;
+}
+.algo-step .a-icon{flex-shrink:0;width:18px;text-align:center;font-size:14px}
+.algo-step.pending .a-icon{color:var(--text-muted)}
+.algo-step.active{background:var(--accent-muted)}
+.algo-step.active .a-icon{color:var(--accent)}
+.algo-step.done .a-icon{color:var(--term-green)}
+.algo-step .a-text{flex:1}
+.algo-step .a-detail{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+.status-bar{
+  flex-shrink:0;display:flex;align-items:center;gap:16px;padding:8px 0;
+  border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);
+  font-family:'JetBrains Mono',monospace;flex-wrap:wrap;
+}
+.status-bar b{color:var(--text);font-variant-numeric:tabular-nums}
+
+@media(max-width:768px){
+  .panels{flex-direction:column;gap:8px}
+  .terminal-wrap,.side{flex:none;height:50vh;min-height:200px}
+  .app-header h1{font-size:14px}
+}
 </style>
 
-<h1>Text Editor in C</h1>
-<p class="subtitle">A console-based line editor using linked lists, dynamic memory allocation, and file I/O</p>
-<span class="tag">C Language</span>
-<span class="tag">Linked List</span>
-<span class="tag">Dynamic Memory</span>
-<span class="tag">File I/O</span>
+<div class="app">
+  <header class="app-header">
+    <h1>Text Editor in C <span>/ Interactive Showcase</span></h1>
+    <div class="header-badge">Live Demo</div>
+  </header>
 
-<h2>Project Overview</h2>
-<p>A menu-driven console text editor where each line of text is stored as a node in a singly linked list. The user can insert, delete, edit, display, save, and load lines through numbered menu options. All memory is dynamically allocated and freed before exit, making it Valgrind-clean.</p>
+  <div class="panels">
+    <div class="terminal-wrap">
+      <div class="term-chrome">
+        <div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="term-title">text_editor</span>
+      </div>
+      <div class="term-body">
+        <div class="term-output" id="output"></div>
+        <div class="term-input-row">
+          <span class="prompt-label" id="prompt-label">Choice:</span>
+          <input type="text" id="input" autocomplete="off" spellcheck="false" autofocus>
+        </div>
+      </div>
+    </div>
 
-<h2>C Features &amp; Concepts Used</h2>
-<table>
-  <tr><th>Concept</th><th>Where it appears</th></tr>
-  <tr><td><code>struct</code></td><td>Each line is a <code>struct Line</code> with a text array and a <code>next</code> pointer</td></tr>
-  <tr><td>Singly Linked List</td><td>Lines are chained via <code>next</code> pointers; head points to the first node</td></tr>
-  <tr><td><code>malloc</code> / <code>free</code></td><td><code>create_line()</code> allocates; <code>delete_line()</code> and <code>free_all_lines()</code> deallocate</td></tr>
-  <tr><td>Pointer traversal</td><td>Every function walks the list with <code>current = current-&gt;next</code></td></tr>
-  <tr><td><code>fopen</code> / <code>fclose</code></td><td>Save opens in write mode <code>"w"</code>, load opens in read mode <code>"r"</code></td></tr>
-  <tr><td><code>fprintf</code> / <code>fgets</code></td><td>Write lines to file; read lines from file</td></tr>
-  <tr><td><code>strcpy</code> / <code>strcspn</code></td><td>Copy text into nodes; strip the newline character from input</td></tr>
-  <tr><td><code>switch-case</code></td><td>Menu dispatch in <code>main()</code></td></tr>
-  <tr><td>Global variables</td><td><code>head</code> and <code>total_lines</code> are accessible by all functions</td></tr>
-  <tr><td><code>#define</code> macro</td><td><code>MAX_LINE 1024</code> sets the maximum characters per line</td></tr>
-</table>
+    <div class="side">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="viz">Linked List</button>
+        <button class="tab-btn" data-tab="code">Source Code</button>
+        <button class="tab-btn" data-tab="algo">Algorithm</button>
+      </div>
+      <div class="tab-panel" id="tab-viz">
+        <div class="viz-panel" id="viz"></div>
+      </div>
+      <div class="tab-panel" id="tab-code" hidden>
+        <div class="code-scroll" id="code-display"></div>
+      </div>
+      <div class="tab-panel" id="tab-algo" hidden>
+        <div class="algo-panel" id="algo"></div>
+      </div>
+    </div>
+  </div>
 
-<h2>Algorithm</h2>
-
-<h3>Main Program Loop</h3>
-<div class="algo-step"><span class="num">1.</span><span>Display 8-option menu</span></div>
-<div class="algo-step"><span class="num">2.</span><span>Read user's integer choice with <code>scanf</code></span></div>
-<div class="algo-step"><span class="num">3.</span><span>Dispatch to the matching function via <code>switch-case</code></span></div>
-<div class="algo-step"><span class="num">4.</span><span>Repeat until user chooses option 8 (Exit)</span></div>
-
-<h3>Insert at End</h3>
-<div class="algo-step"><span class="num">1.</span><span>Allocate a new node with <code>malloc</code></span></div>
-<div class="algo-step"><span class="num">2.</span><span>Copy the text into the node</span></div>
-<div class="algo-step"><span class="num">3.</span><span>If list is empty, set <code>head = new_line</code></span></div>
-<div class="algo-step"><span class="num">4.</span><span>Else traverse to the last node, set <code>last-&gt;next = new_line</code></span></div>
-
-<h3>Insert at Position</h3>
-<div class="algo-step"><span class="num">1.</span><span>Validate position is between 1 and total_lines+1</span></div>
-<div class="algo-step"><span class="num">2.</span><span>If position is 1, new node becomes head</span></div>
-<div class="algo-step"><span class="num">3.</span><span>Else traverse to node at (position&minus;1), rewire pointers</span></div>
-
-<h3>Delete a Line</h3>
-<div class="algo-step"><span class="num">1.</span><span>Validate position is between 1 and total_lines</span></div>
-<div class="algo-step"><span class="num">2.</span><span>If position is 1, move head to <code>head-&gt;next</code></span></div>
-<div class="algo-step"><span class="num">3.</span><span>Else traverse to (position&minus;1), skip over the target node</span></div>
-<div class="algo-step"><span class="num">4.</span><span>Call <code>free()</code> on the removed node</span></div>
-
-<h3>Save / Load</h3>
-<div class="algo-step"><span class="num">1.</span><span><b>Save:</b> Open file in <code>"w"</code> mode, write each node's text with <code>fprintf</code>, close</span></div>
-<div class="algo-step"><span class="num">2.</span><span><b>Load:</b> Open file in <code>"r"</code> mode, free existing list, read each line with <code>fgets</code>, insert at end</span></div>
-
-<h2>Flowchart</h2>
-<div class="flow">
-<svg viewBox="0 0 520 680" width="520" height="680" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="var(--accent)"/></marker>
-  </defs>
-  <!-- Start -->
-  <ellipse cx="260" cy="30" rx="60" ry="22" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
-  <text x="260" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">START</text>
-  <!-- Arrow -->
-  <line x1="260" y1="52" x2="260" y2="75" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- Show Menu -->
-  <rect x="175" y="80" width="170" height="38" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-  <text x="260" y="104" text-anchor="middle" font-size="12" fill="var(--fg)">Show Menu</text>
-  <line x1="260" y1="118" x2="260" y2="140" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- Read Choice -->
-  <rect x="175" y="145" width="170" height="38" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-  <text x="260" y="169" text-anchor="middle" font-size="12" fill="var(--fg)">Read Choice (scanf)</text>
-  <line x1="260" y1="183" x2="260" y2="210" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- Decision diamond -->
-  <polygon points="260,215 370,265 260,315 150,265" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
-  <text x="260" y="262" text-anchor="middle" font-size="11" font-weight="500" fill="var(--fg)">Choice?</text>
-  <!-- Left branch: 1-2 Insert -->
-  <line x1="150" y1="265" x2="60" y2="265" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="5" y="285" width="110" height="55" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="60" y="305" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">1 or 2</text>
-  <text x="60" y="320" text-anchor="middle" font-size="10" fill="var(--fg)">Insert Line</text>
-  <text x="60" y="333" text-anchor="middle" font-size="9" fill="var(--muted)">(end or position)</text>
-  <!-- Right branch: 3 Delete -->
-  <line x1="370" y1="265" x2="460" y2="265" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="405" y="285" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="460" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">3</text>
-  <text x="460" y="318" text-anchor="middle" font-size="10" fill="var(--fg)">Delete Line</text>
-  <!-- Center branches -->
-  <!-- 4 Edit -->
-  <line x1="220" y1="315" x2="140" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="85" y="375" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="140" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">4</text>
-  <text x="140" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Edit Line</text>
-  <!-- 5 Display -->
-  <rect x="205" y="375" width="110" height="45" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="260" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">5</text>
-  <text x="260" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Display Lines</text>
-  <line x1="260" y1="315" x2="260" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- 6-7 File -->
-  <line x1="300" y1="315" x2="380" y2="370" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="325" y="375" width="110" height="55" rx="5" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="380" y="393" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">6 or 7</text>
-  <text x="380" y="408" text-anchor="middle" font-size="10" fill="var(--fg)">Save / Load</text>
-  <text x="380" y="421" text-anchor="middle" font-size="9" fill="var(--muted)">(file operations)</text>
-  <!-- All merge back -->
-  <line x1="60" y1="340" x2="60" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
-  <line x1="460" y1="330" x2="460" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
-  <line x1="140" y1="420" x2="140" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
-  <line x1="260" y1="420" x2="260" y2="460" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
-  <line x1="380" y1="430" x2="380" y2="480" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4"/>
-  <!-- Merge line -->
-  <line x1="60" y1="480" x2="460" y2="480" stroke="var(--accent)" stroke-width="1.5"/>
-  <line x1="260" y1="480" x2="260" y2="505" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- Choice 8 decision -->
-  <polygon points="260,510 340,545 260,580 180,545" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
-  <text x="260" y="542" text-anchor="middle" font-size="11" font-weight="500" fill="var(--fg)">Choice = 8?</text>
-  <!-- No - loop back -->
-  <line x1="180" y1="545" x2="80" y2="545" stroke="var(--accent)" stroke-width="1.5"/>
-  <text x="155" y="538" font-size="10" fill="var(--muted)">No</text>
-  <line x1="80" y1="545" x2="80" y2="99" stroke="var(--accent)" stroke-width="1.5"/>
-  <line x1="80" y1="99" x2="170" y2="99" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <!-- Yes - free and exit -->
-  <line x1="260" y1="580" x2="260" y2="600" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <text x="275" y="594" font-size="10" fill="var(--muted)">Yes</text>
-  <rect x="185" y="605" width="150" height="35" rx="5" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-  <text x="260" y="627" text-anchor="middle" font-size="11" fill="var(--fg)">free_all_lines()</text>
-  <line x1="260" y1="640" x2="260" y2="655" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <ellipse cx="260" cy="670" rx="40" ry="18" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
-  <text x="260" y="675" text-anchor="middle" font-size="12" font-weight="600" fill="var(--fg)">END</text>
-</svg>
+  <div class="status-bar" id="status">
+    <span>Nodes: <b id="st-nodes">0</b></span>
+    <span>Memory: <b id="st-mem">0 B</b></span>
+    <span>Files saved: <b id="st-files">0</b></span>
+    <span>Operation: <b id="st-op">idle</b></span>
+  </div>
 </div>
 
-<h2>Linked List Visualization</h2>
-<div class="flow">
-<svg viewBox="0 0 500 70" width="500" height="70" xmlns="http://www.w3.org/2000/svg">
-  <text x="0" y="20" font-size="11" font-weight="600" fill="var(--accent)">head</text>
-  <line x1="30" y1="22" x2="60" y2="40" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="65" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="115" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Hello World"</text>
-  <line x1="165" y1="42" x2="195" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="200" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="250" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Line two"</text>
-  <line x1="300" y1="42" x2="330" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <rect x="335" y="25" width="100" height="35" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-  <text x="385" y="47" text-anchor="middle" font-size="10" fill="var(--fg)">"Third line"</text>
-  <line x1="435" y1="42" x2="465" y2="42" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
-  <text x="470" y="47" font-size="11" font-weight="600" fill="var(--muted)">NULL</text>
-</svg>
-</div>
+<script>
+const C_SRC = [
+  {id:'headers',label:'Headers & Defines',code:`#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n#define MAX_LINE 1024`},
+  {id:'struct',label:'struct Line',code:`struct Line {\n    char text[MAX_LINE];\n    struct Line *next;\n};`},
+  {id:'globals',label:'Global Variables',code:`struct Line *head = NULL;\nint total_lines = 0;`},
+  {id:'create_line',label:'create_line()',code:`struct Line *create_line(char *text) {\n    struct Line *new_line = (struct Line *)malloc(sizeof(struct Line));\n    if (new_line == NULL) {\n        printf("Memory allocation failed!\\n");\n        exit(1);\n    }\n    strcpy(new_line->text, text);\n    new_line->next = NULL;\n    return new_line;\n}`},
+  {id:'insert_at_end',label:'insert_at_end()',code:`void insert_at_end(char *text) {\n    struct Line *new_line = create_line(text);\n    if (head == NULL) {\n        head = new_line;\n    } else {\n        struct Line *current = head;\n        while (current->next != NULL) {\n            current = current->next;\n        }\n        current->next = new_line;\n    }\n    total_lines++;\n    printf("Line added at position %d.\\n", total_lines);\n}`},
+  {id:'insert_at_position',label:'insert_at_position()',code:`void insert_at_position(int position, char *text) {\n    if (position < 1 || position > total_lines + 1) {\n        printf("Invalid position! Valid range: 1 to %d\\n", total_lines + 1);\n        return;\n    }\n    struct Line *new_line = create_line(text);\n    if (position == 1) {\n        new_line->next = head;\n        head = new_line;\n    } else {\n        struct Line *current = head;\n        for (int i = 1; i < position - 1; i++) {\n            current = current->next;\n        }\n        new_line->next = current->next;\n        current->next = new_line;\n    }\n    total_lines++;\n    printf("Line inserted at position %d.\\n", position);\n}`},
+  {id:'delete_line',label:'delete_line()',code:`void delete_line(int position) {\n    if (head == NULL) {\n        printf("No lines to delete!\\n");\n        return;\n    }\n    if (position < 1 || position > total_lines) {\n        printf("Invalid position! Valid range: 1 to %d\\n", total_lines);\n        return;\n    }\n    struct Line *to_delete;\n    if (position == 1) {\n        to_delete = head;\n        head = head->next;\n    } else {\n        struct Line *current = head;\n        for (int i = 1; i < position - 1; i++) {\n            current = current->next;\n        }\n        to_delete = current->next;\n        current->next = to_delete->next;\n    }\n    printf("Deleted line %d: %s\\n", position, to_delete->text);\n    free(to_delete);\n    total_lines--;\n}`},
+  {id:'display_lines',label:'display_lines()',code:`void display_lines() {\n    if (head == NULL) {\n        printf("No lines in the editor.\\n");\n        return;\n    }\n    printf("\\n--- Editor Contents ---\\n");\n    struct Line *current = head;\n    int line_number = 1;\n    while (current != NULL) {\n        printf("%3d | %s\\n", line_number, current->text);\n        current = current->next;\n        line_number++;\n    }\n    printf("--- Total: %d lines ---\\n", total_lines);\n}`},
+  {id:'save_to_file',label:'save_to_file()',code:`void save_to_file(char *filename) {\n    FILE *file = fopen(filename, "w");\n    if (file == NULL) {\n        printf("Error: Could not open file '%s' for writing.\\n", filename);\n        return;\n    }\n    struct Line *current = head;\n    while (current != NULL) {\n        fprintf(file, "%s\\n", current->text);\n        current = current->next;\n    }\n    fclose(file);\n    printf("Saved %d lines to '%s'.\\n", total_lines, filename);\n}`},
+  {id:'free_all_lines',label:'free_all_lines()',code:`void free_all_lines() {\n    struct Line *current = head;\n    while (current != NULL) {\n        struct Line *temp = current;\n        current = current->next;\n        free(temp);\n    }\n    head = NULL;\n    total_lines = 0;\n}`},
+  {id:'load_from_file',label:'load_from_file()',code:`void load_from_file(char *filename) {\n    FILE *file = fopen(filename, "r");\n    if (file == NULL) {\n        printf("Error: Could not open file '%s' for reading.\\n", filename);\n        return;\n    }\n    free_all_lines();\n    char buffer[MAX_LINE];\n    while (fgets(buffer, MAX_LINE, file) != NULL) {\n        buffer[strcspn(buffer, "\\n")] = '\\0';\n        insert_at_end(buffer);\n    }\n    fclose(file);\n    printf("Loaded %d lines from '%s'.\\n", total_lines, filename);\n}`},
+  {id:'edit_line',label:'edit_line()',code:`void edit_line(int position) {\n    if (position < 1 || position > total_lines) {\n        printf("Invalid position! Valid range: 1 to %d\\n", total_lines);\n        return;\n    }\n    struct Line *current = head;\n    for (int i = 1; i < position; i++) {\n        current = current->next;\n    }\n    printf("Current text: %s\\n", current->text);\n    printf("Enter new text: ");\n    char buffer[MAX_LINE];\n    fgets(buffer, MAX_LINE, stdin);\n    buffer[strcspn(buffer, "\\n")] = '\\0';\n    strcpy(current->text, buffer);\n    printf("Line %d updated.\\n", position);\n}`},
+  {id:'show_menu',label:'show_menu()',code:`void show_menu() {\n    printf("\\n===== TEXT EDITOR =====\\n");\n    printf("1. Insert line at end\\n");\n    printf("2. Insert line at position\\n");\n    printf("3. Delete a line\\n");\n    printf("4. Edit a line\\n");\n    printf("5. Display all lines\\n");\n    printf("6. Save to file\\n");\n    printf("7. Load from file\\n");\n    printf("8. Exit\\n");\n    printf("Choice: ");\n}`},
+  {id:'main',label:'main()',code:`int main() {\n    int choice, position;\n    char buffer[MAX_LINE];\n    char filename[256];\n\n    printf("Welcome to the Text Editor!\\n");\n\n    while (1) {\n        show_menu();\n        scanf("%d", &choice);\n        getchar();\n\n        switch (choice) {\n            case 1:\n                printf("Enter text: ");\n                fgets(buffer, MAX_LINE, stdin);\n                buffer[strcspn(buffer, "\\n")] = '\\0';\n                insert_at_end(buffer);\n                break;\n            case 2:\n                printf("Enter position (1 to %d): ", total_lines + 1);\n                scanf("%d", &position);\n                getchar();\n                printf("Enter text: ");\n                fgets(buffer, MAX_LINE, stdin);\n                buffer[strcspn(buffer, "\\n")] = '\\0';\n                insert_at_position(position, buffer);\n                break;\n            case 3:\n                display_lines();\n                printf("Enter line number to delete: ");\n                scanf("%d", &position);\n                getchar();\n                delete_line(position);\n                break;\n            case 4:\n                display_lines();\n                printf("Enter line number to edit: ");\n                scanf("%d", &position);\n                getchar();\n                edit_line(position);\n                break;\n            case 5:\n                display_lines();\n                break;\n            case 6:\n                printf("Enter filename: ");\n                fgets(filename, 256, stdin);\n                filename[strcspn(filename, "\\n")] = '\\0';\n                save_to_file(filename);\n                break;\n            case 7:\n                printf("Enter filename to load: ");\n                fgets(filename, 256, stdin);\n                filename[strcspn(filename, "\\n")] = '\\0';\n                load_from_file(filename);\n                break;\n            case 8:\n                free_all_lines();\n                printf("Goodbye!\\n");\n                return 0;\n            default:\n                printf("Invalid choice! Try again.\\n");\n        }\n    }\n    return 0;\n}`}
+];
 
-<h2>What Makes This Project Different</h2>
-<p>If another team builds a similar text editor, here are the distinguishing points of this implementation:</p>
-<table class="diff-table">
-  <tr><th>Aspect</th><th>This project</th><th>Typical alternative</th></tr>
-  <tr><td>Data structure</td><td>Singly linked list (dynamic size, no wasted memory)</td><td>Fixed-size array of strings (wastes memory, hard limit)</td></tr>
-  <tr><td>Insert at position</td><td>Supported at any valid index</td><td>Often only append at end</td></tr>
-  <tr><td>Memory management</td><td><code>free_all_lines()</code> cleans up everything; Valgrind-clean</td><td>Often missing, causes memory leaks</td></tr>
-  <tr><td>File persistence</td><td>Both save and load supported</td><td>Some only save, cannot reload</td></tr>
-  <tr><td>Edit in place</td><td>Modify any line without deleting and re-inserting</td><td>Often requires delete + insert</td></tr>
-</table>
+const ALGOS = {
+  insert_at_end:{name:'Insert at End',fns:['create_line','insert_at_end'],steps:[
+    {t:'Allocate memory for new node',d:'malloc(sizeof(struct Line))'},
+    {t:'Copy text into node',d:'strcpy(new_line->text, text)'},
+    {t:'Set new_line->next = NULL',d:'Not connected yet'},
+    {t:'Check if head == NULL',d:'Is the list empty?'},
+    {t:'Traverse to last node',d:'while (current->next != NULL)'},
+    {t:'Attach new node at end',d:'last->next = new_line'},
+    {t:'Increment total_lines',d:'total_lines++'}
+  ]},
+  insert_at_position:{name:'Insert at Position',fns:['create_line','insert_at_position'],steps:[
+    {t:'Validate position range',d:'1 to total_lines + 1'},
+    {t:'Allocate memory for new node',d:'malloc(sizeof(struct Line))'},
+    {t:'If position == 1: new becomes head',d:'new_line->next = head; head = new_line'},
+    {t:'Else: walk to node before target',d:'for loop to position - 1'},
+    {t:'Rewire pointers',d:'new->next = current->next; current->next = new'},
+    {t:'Increment total_lines',d:'total_lines++'}
+  ]},
+  delete_line:{name:'Delete Line',fns:['delete_line'],steps:[
+    {t:'Check if list is empty',d:'head == NULL?'},
+    {t:'Validate position range',d:'1 to total_lines'},
+    {t:'If position == 1: move head forward',d:'head = head->next'},
+    {t:'Else: walk to node before target',d:'for loop to position - 1'},
+    {t:'Save target & skip over it',d:'current->next = to_delete->next'},
+    {t:'Free deleted node memory',d:'free(to_delete)'},
+    {t:'Decrement total_lines',d:'total_lines--'}
+  ]},
+  edit_line:{name:'Edit Line',fns:['edit_line'],steps:[
+    {t:'Validate position range',d:'1 to total_lines'},
+    {t:'Walk to target node',d:'for loop to position'},
+    {t:'Show current text',d:'printf current->text'},
+    {t:'Read new text from user',d:'fgets(buffer, MAX_LINE, stdin)'},
+    {t:'Overwrite node text',d:'strcpy(current->text, buffer)'}
+  ]},
+  display_lines:{name:'Display All Lines',fns:['display_lines'],steps:[
+    {t:'Check if list is empty',d:'head == NULL?'},
+    {t:'Start at head node',d:'current = head'},
+    {t:'Print line number and text',d:'printf("%3d | %s", ...)'},
+    {t:'Move to next node',d:'current = current->next'},
+    {t:'Repeat until NULL',d:'while (current != NULL)'}
+  ]},
+  save_to_file:{name:'Save to File',fns:['save_to_file'],steps:[
+    {t:'Open file in write mode',d:'fopen(filename, "w")'},
+    {t:'Walk list from head',d:'current = head'},
+    {t:'Write each line to file',d:'fprintf(file, "%s\\n", ...)'},
+    {t:'Close file',d:'fclose(file)'}
+  ]},
+  load_from_file:{name:'Load from File',fns:['free_all_lines','load_from_file'],steps:[
+    {t:'Open file in read mode',d:'fopen(filename, "r")'},
+    {t:'Free existing list',d:'free_all_lines()'},
+    {t:'Read lines with fgets',d:'fgets(buffer, MAX_LINE, file)'},
+    {t:'Strip newline with strcspn',d:'buffer[strcspn(...)] = \'\\0\''},
+    {t:'Insert each line at end',d:'insert_at_end(buffer)'},
+    {t:'Close file',d:'fclose(file)'}
+  ]},
+  free_all_lines:{name:'Free All Lines',fns:['free_all_lines'],steps:[
+    {t:'Start at head',d:'current = head'},
+    {t:'Save current in temp',d:'temp = current'},
+    {t:'Move current forward',d:'current = current->next'},
+    {t:'Free temp',d:'free(temp)'},
+    {t:'Repeat until NULL',d:'Loop ends when current == NULL'},
+    {t:'Reset head and counter',d:'head = NULL; total_lines = 0'}
+  ]}
+};
 
-<h2>Conclusion</h2>
-<ul>
-  <li>The project demonstrates core C concepts: structures, pointers, dynamic memory, linked lists, and file I/O</li>
-  <li>Every <code>malloc</code> has a matching <code>free</code>, making the program memory-safe and Valgrind-clean</li>
-  <li>The menu-driven design keeps the interface simple for console use</li>
-  <li>File operations allow data to persist across sessions</li>
-  <li>The linked list allows unlimited lines (bounded only by available RAM)</li>
-</ul>
+let head = null, total_lines = 0;
+const vfs = {};
+let state = 'menu', tempPos = 0, tempEditNode = null;
+let activeFns = [], activeAlgo = null;
+const NODE_SIZE = 1032;
 
-<h2>Limitations</h2>
-<ul>
-  <li><b>No undo/redo</b> &mdash; once a line is deleted or edited, the old content is gone</li>
-  <li><b>Line length cap</b> &mdash; each line is limited to 1024 characters (<code>MAX_LINE</code>)</li>
-  <li><b>No search</b> &mdash; cannot find a word or line by content</li>
-  <li><b>Sequential access</b> &mdash; reaching line N requires traversing N&minus;1 nodes (O(n) per operation)</li>
-  <li><b>No cursor movement</b> &mdash; this is a line editor, not a character-level editor like vim or nano</li>
-  <li><b>Single file at a time</b> &mdash; no tabs or multiple buffers</li>
-  <li><b>No syntax highlighting</b> &mdash; all text is treated as plain text</li>
-  <li><b>No auto-save</b> &mdash; user must explicitly choose save before exiting</li>
-</ul>
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-<hr>
+function hlC(code){
+  const KW = new Set(['int','char','void','struct','if','else','while','for','return','switch','case','break','default','NULL','sizeof','exit','FILE','define','include']);
+  let r='',i=0;
+  while(i<code.length){
+    if(code[i]==='"'){let e=i+1;while(e<code.length&&code[e]!=='"'){if(code[e]==='\\')e++;e++}
+      r+=`<span class="hl-str">${esc(code.slice(i,e+1))}</span>`;i=e+1;
+    }else if(code[i]==='/'&&code[i+1]==='/'){let e=code.indexOf('\n',i);if(e===-1)e=code.length;
+      r+=`<span class="hl-cmt">${esc(code.slice(i,e))}</span>`;i=e;
+    }else if(code[i]==='#'&&(i===0||code[i-1]==='\n')){let e=code.indexOf('\n',i);if(e===-1)e=code.length;
+      r+=`<span class="hl-pre">${esc(code.slice(i,e))}</span>`;i=e;
+    }else if(/[a-zA-Z_]/.test(code[i])){let e=i;while(e<code.length&&/[a-zA-Z0-9_]/.test(code[e]))e++;
+      const w=code.slice(i,e);
+      if(KW.has(w))r+=`<span class="hl-kw">${w}</span>`;
+      else if(e<code.length&&code[e]==='(')r+=`<span class="hl-fn">${esc(w)}</span>`;
+      else r+=esc(w);i=e;
+    }else if(/[0-9]/.test(code[i])){let e=i;while(e<code.length&&/[0-9]/.test(code[e]))e++;
+      r+=`<span class="hl-num">${code.slice(i,e)}</span>`;i=e;
+    }else{r+=esc(code[i]);i++}
+  }
+  return r;
+}
 
-<h2>Compile &amp; Run</h2>
-<pre>gcc -o text_editor text_editor.c
-./text_editor</pre>
+function buildCodePanel(){
+  const el=document.getElementById('code-display');
+  let lineNum=1,html='';
+  for(const block of C_SRC){
+    const lines=block.code.split('\n');
+    html+=`<div class="code-fn" id="cf-${block.id}"><div class="fn-label">${esc(block.label)}</div>`;
+    for(const line of lines){
+      html+=`<div class="cl"><span class="cl-num">${lineNum}</span><span class="cl-code">${hlC(line)}</span></div>`;
+      lineNum++;
+    }
+    html+='</div>';
+    lineNum++;
+  }
+  el.innerHTML=html;
+}
 
-<h3>Check for Memory Leaks</h3>
-<pre>valgrind --leak-check=full ./text_editor</pre>
-<p>Expected output: <code>All heap blocks were freed -- no leaks are possible</code></p>
+function highlightFns(ids){
+  activeFns=ids;
+  document.querySelectorAll('.code-fn').forEach(el=>{
+    el.classList.toggle('active',ids.includes(el.id.replace('cf-','')));
+  });
+  if(ids.length){
+    const target=document.getElementById('cf-'+ids[ids.length-1]);
+    if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
 
-<footer>Text Editor in C &mdash; Console-Based Line Editor Project</footer>
+function showAlgo(key){
+  activeAlgo=key;
+  const el=document.getElementById('algo');
+  if(!key||!ALGOS[key]){el.innerHTML='<div class="algo-idle">Choose a menu option to see its algorithm steps</div>';return;}
+  const a=ALGOS[key];
+  let html=`<div class="algo-title">${esc(a.name)}</div>`;
+  a.steps.forEach((s,i)=>{
+    html+=`<div class="algo-step done" id="as-${i}"><span class="a-icon">&#10003;</span><div><div class="a-text">${esc(s.t)}</div>${s.d?`<div class="a-detail">${esc(s.d)}</div>`:''}</div></div>`;
+  });
+  el.innerHTML=html;
+}
+
+function renderViz(hlIndex,hlClass){
+  const el=document.getElementById('viz');
+  if(!head){
+    el.innerHTML='<div class="viz-empty"><b>head &rarr; NULL</b>Insert a line to see the linked list grow</div>'+statsHTML();
+    return;
+  }
+  let html='<div class="ll-row"><span class="ll-head">HEAD</span>';
+  let cur=head,idx=0;
+  while(cur){
+    const cls=(idx===hlIndex&&hlClass)?` ${hlClass}`:'';
+    const txt=cur.text.length>22?cur.text.slice(0,20)+'...':cur.text;
+    html+=`<div class="ll-node${cls}"><span class="n-text">"${esc(txt)}"</span><span class="n-ptr">next ${cur.next?'&rarr;':'&rarr; NULL'}</span></div>`;
+    if(cur.next)html+='<span class="ll-arrow">&rarr;</span>';
+    cur=cur.next;idx++;
+  }
+  html+='</div>'+statsHTML();
+  el.innerHTML=html;
+}
+
+function statsHTML(){
+  return `<div class="viz-stats"><span class="stat">Nodes: <b>${total_lines}</b></span><span class="stat">Memory: <b>${fmtBytes(total_lines*NODE_SIZE)}</b></span><span class="stat">Traversals: <b>O(n)</b></span></div>`;
+}
+
+function fmtBytes(b){if(b===0)return '0 B';if(b<1024)return b+' B';return (b/1024).toFixed(1)+' KB';}
+
+function updateStatus(op){
+  document.getElementById('st-nodes').textContent=total_lines;
+  document.getElementById('st-mem').textContent=fmtBytes(total_lines*NODE_SIZE);
+  document.getElementById('st-files').textContent=Object.keys(vfs).length;
+  document.getElementById('st-op').textContent=op||'idle';
+}
+
+const out=document.getElementById('output');
+const inp=document.getElementById('input');
+
+function print(text,cls){
+  const d=document.createElement('div');
+  d.className='tl'+(cls?' '+cls:'');
+  d.textContent=text;
+  out.appendChild(d);
+  out.scrollTop=out.scrollHeight;
+}
+
+function printMenu(){
+  print('');
+  print('===== TEXT EDITOR =====','tl-header');
+  print('1. Insert line at end');
+  print('2. Insert line at position');
+  print('3. Delete a line');
+  print('4. Edit a line');
+  print('5. Display all lines');
+  print('6. Save to file');
+  print('7. Load from file');
+  print('8. Exit');
+}
+
+function setPrompt(t){document.getElementById('prompt-label').textContent=t;}
+
+function insert_at_end(text){
+  const n={text,next:null};
+  if(!head){head=n;}else{let c=head;while(c.next)c=c.next;c.next=n;}
+  total_lines++;
+  print(`Line added at position ${total_lines}.`,'tl-green');
+  renderViz(total_lines-1,'hl-new');
+  setTimeout(()=>renderViz(),1200);
+  highlightFns(['create_line','insert_at_end']);
+  showAlgo('insert_at_end');
+  updateStatus('insert_at_end');
+}
+
+function insert_at_position(pos,text){
+  if(pos<1||pos>total_lines+1){print(`Invalid position! Valid range: 1 to ${total_lines+1}`,'tl-red');return false;}
+  const n={text,next:null};
+  if(pos===1){n.next=head;head=n;}
+  else{let c=head;for(let i=1;i<pos-1;i++)c=c.next;n.next=c.next;c.next=n;}
+  total_lines++;
+  print(`Line inserted at position ${pos}.`,'tl-green');
+  renderViz(pos-1,'hl-new');
+  setTimeout(()=>renderViz(),1200);
+  highlightFns(['create_line','insert_at_position']);
+  showAlgo('insert_at_position');
+  updateStatus('insert_at_position');
+  return true;
+}
+
+function delete_line(pos){
+  if(!head){print('No lines to delete!','tl-red');return false;}
+  if(pos<1||pos>total_lines){print(`Invalid position! Valid range: 1 to ${total_lines}`,'tl-red');return false;}
+  renderViz(pos-1,'hl-del');
+  let del;
+  if(pos===1){del=head;head=head.next;}
+  else{let c=head;for(let i=1;i<pos-1;i++)c=c.next;del=c.next;c.next=del.next;}
+  print(`Deleted line ${pos}: ${del.text}`,'tl-yellow');
+  total_lines--;
+  setTimeout(()=>renderViz(),600);
+  highlightFns(['delete_line']);
+  showAlgo('delete_line');
+  updateStatus('delete_line');
+  return true;
+}
+
+function display_lines(){
+  if(!head){print('No lines in the editor.','tl-muted');return;}
+  print('');
+  print('--- Editor Contents ---','tl-blue');
+  let c=head,n=1;
+  while(c){print(`  ${String(n).padStart(3)} | ${c.text}`);c=c.next;n++;}
+  print(`--- Total: ${total_lines} lines ---`,'tl-blue');
+  highlightFns(['display_lines']);
+  showAlgo('display_lines');
+  updateStatus('display_lines');
+}
+
+function save_to_file(fn){
+  if(!head){vfs[fn]='';print(`Saved 0 lines to '${fn}'.`,'tl-green');}
+  else{let lines=[];let c=head;while(c){lines.push(c.text);c=c.next;}
+    vfs[fn]=lines.join('\n');print(`Saved ${total_lines} lines to '${fn}'.`,'tl-green');}
+  highlightFns(['save_to_file']);
+  showAlgo('save_to_file');
+  updateStatus('save_to_file');
+}
+
+function load_from_file(fn){
+  if(!(fn in vfs)){print(`Error: Could not open file '${fn}' for reading.`,'tl-red');return;}
+  let c=head;while(c){let t=c;c=c.next;} head=null;total_lines=0;
+  const content=vfs[fn];
+  if(content){content.split('\n').forEach(line=>{
+    const n={text:line,next:null};
+    if(!head)head=n;else{let c=head;while(c.next)c=c.next;c.next=n;}
+    total_lines++;
+  });}
+  print(`Loaded ${total_lines} lines from '${fn}'.`,'tl-green');
+  renderViz();
+  highlightFns(['free_all_lines','load_from_file']);
+  showAlgo('load_from_file');
+  updateStatus('load_from_file');
+}
+
+function edit_line(pos,newText){
+  if(pos<1||pos>total_lines){print(`Invalid position! Valid range: 1 to ${total_lines}`,'tl-red');return false;}
+  let c=head;for(let i=1;i<pos;i++)c=c.next;
+  c.text=newText;
+  print(`Line ${pos} updated.`,'tl-green');
+  renderViz(pos-1,'hl-edit');
+  setTimeout(()=>renderViz(),1200);
+  highlightFns(['edit_line']);
+  showAlgo('edit_line');
+  updateStatus('edit_line');
+  return true;
+}
+
+function processInput(val){
+  print('> '+val,'tl-echo');
+  switch(state){
+    case 'menu':{
+      const ch=parseInt(val);
+      if(isNaN(ch)||ch<1||ch>8){print('Invalid choice! Try again.','tl-red');setPrompt('Choice:');break;}
+      highlightFns(['main','show_menu']);
+      switch(ch){
+        case 1:setPrompt('Enter text:');state='insert_text';break;
+        case 2:setPrompt(`Position (1-${total_lines+1}):`);state='insert_pos_num';break;
+        case 3:display_lines();setPrompt('Line to delete:');state='delete_num';break;
+        case 4:display_lines();setPrompt('Line to edit:');state='edit_num';break;
+        case 5:display_lines();setPrompt('Choice:');break;
+        case 6:setPrompt('Filename:');state='save_fn';break;
+        case 7:setPrompt('Filename:');state='load_fn';break;
+        case 8:
+          let c=head;while(c){let t=c;c=c.next;}head=null;total_lines=0;
+          print('Goodbye!','tl-green');
+          highlightFns(['free_all_lines','main']);showAlgo('free_all_lines');
+          renderViz();updateStatus('exit');
+          setTimeout(()=>{
+            head=null;total_lines=0;
+            print('');print('--- Program restarted ---','tl-blue');print('Welcome to the Text Editor!','tl-green');
+            printMenu();setPrompt('Choice:');state='menu';
+            highlightFns([]);showAlgo(null);renderViz();updateStatus('idle');
+          },1500);
+          return;
+      }
+      break;
+    }
+    case 'insert_text':
+      insert_at_end(val);state='menu';setPrompt('Choice:');printMenu();break;
+    case 'insert_pos_num':{
+      const p=parseInt(val);
+      if(isNaN(p)){print('Invalid input! Enter a number.','tl-red');break;}
+      tempPos=p;setPrompt('Enter text:');state='insert_pos_text';break;
+    }
+    case 'insert_pos_text':
+      insert_at_position(tempPos,val);state='menu';setPrompt('Choice:');printMenu();break;
+    case 'delete_num':{
+      const p=parseInt(val);
+      if(isNaN(p)){print('Invalid input! Enter a number.','tl-red');break;}
+      delete_line(p);state='menu';setPrompt('Choice:');printMenu();break;
+    }
+    case 'edit_num':{
+      const p=parseInt(val);
+      if(isNaN(p)){print('Invalid input! Enter a number.','tl-red');break;}
+      if(p<1||p>total_lines){print(`Invalid position! Valid range: 1 to ${total_lines}`,'tl-red');state='menu';setPrompt('Choice:');printMenu();break;}
+      tempPos=p;
+      let c=head;for(let i=1;i<p;i++)c=c.next;
+      print(`Current text: ${c.text}`,'tl-yellow');
+      setPrompt('New text:');state='edit_text';break;
+    }
+    case 'edit_text':
+      edit_line(tempPos,val);state='menu';setPrompt('Choice:');printMenu();break;
+    case 'save_fn':
+      save_to_file(val);state='menu';setPrompt('Choice:');printMenu();break;
+    case 'load_fn':
+      load_from_file(val);state='menu';setPrompt('Choice:');printMenu();break;
+  }
+}
+
+inp.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const v=inp.value;inp.value='';
+    if(v.trim()!=='')processInput(v.trim());
+  }
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p=>p.hidden=true);
+    document.getElementById('tab-'+btn.dataset.tab).hidden=false;
+  });
+});
+
+document.addEventListener('click',()=>inp.focus());
+
+buildCodePanel();
+print('Welcome to the Text Editor!','tl-green');
+printMenu();
+setPrompt('Choice:');
+renderViz();
+showAlgo(null);
+updateStatus('idle');
+inp.focus();
+</script>
